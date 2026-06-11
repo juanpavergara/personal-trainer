@@ -8,6 +8,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -28,6 +29,7 @@ export const trainingObjectiveEnum = pgEnum("training_objective", [
   "strength",
   "metabolic_stress",
   "deload",
+  "maintenance",
   "other",
 ]);
 
@@ -44,6 +46,8 @@ export const exercises = pgTable(
     equipment: text("equipment"),
     mediaUrl: text("media_url"),
     mediaType: mediaTypeEnum("media_type"),
+    instructions: text("instructions").array(), // pasos de ejecución
+    sourceId: text("source_id"), // exerciseId en AscendAPI (import idempotente)
     defaultUnit: weightUnitEnum("default_unit").notNull().default("kg"),
     isCustom: boolean("is_custom").notNull().default(false),
     ownerId: uuid("owner_id"), // referencia lógica a auth.users
@@ -51,7 +55,10 @@ export const exercises = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [index("exercises_muscle_group_idx").on(t.muscleGroup)],
+  (t) => [
+    index("exercises_muscle_group_idx").on(t.muscleGroup),
+    uniqueIndex("exercises_source_id_idx").on(t.sourceId),
+  ],
 ).enableRLS();
 
 // Bloque de entrenamiento con fechas y objetivo; condiciona el motor de progresión
@@ -72,12 +79,16 @@ export const mesocycles = pgTable(
   (t) => [index("mesocycles_user_id_idx").on(t.userId)],
 ).enableRLS();
 
-// Plantilla reutilizable ("Día de empuje A")
+// Plantilla reutilizable ("Día de empuje A"). Ver docs/specs/ROUTINES.md
 export const routines = pgTable(
   "routines",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("user_id").notNull(),
+    // Una rutina puede pertenecer a un mesociclo o ser independiente
+    mesocycleId: uuid("mesocycle_id").references(() => mesocycles.id, {
+      onDelete: "set null",
+    }),
     name: text("name").notNull(),
     description: text("description"),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -98,11 +109,26 @@ export const routineExercises = pgTable(
       .notNull()
       .references(() => exercises.id),
     orderIndex: integer("order_index").notNull(),
-    targetSets: integer("target_sets"),
-    targetReps: text("target_reps"), // "8-12", "AMRAP"…
     notes: text("notes"),
   },
   (t) => [index("routine_exercises_routine_id_idx").on(t.routineId)],
+).enableRLS();
+
+// Sets de plantilla: la rutina tiene granularidad por set, solo con reps
+// sugeridas — NUNCA peso (el peso lo propone el motor de progresión).
+export const routineSets = pgTable(
+  "routine_sets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    routineExerciseId: uuid("routine_exercise_id")
+      .notNull()
+      .references(() => routineExercises.id, { onDelete: "cascade" }),
+    setNumber: integer("set_number").notNull(),
+    suggestedReps: text("suggested_reps").notNull(), // "8", "8-12", "AMRAP"
+  },
+  (t) => [
+    index("routine_sets_routine_exercise_id_idx").on(t.routineExerciseId),
+  ],
 ).enableRLS();
 
 // Un entrenamiento real en una fecha

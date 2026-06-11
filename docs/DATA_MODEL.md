@@ -12,8 +12,10 @@ User (auth)
   │
   ├──< Mesocycle           (bloque de entrenamiento: fechas + objetivo)
   │       │
-  ├──< Routine             (plantilla reutilizable: "Día de empuje")
+  ├──< Routine             (plantilla reutilizable: "Día de empuje"; opcionalmente
+  │       │                 pertenece a un Mesocycle)
   │       └──< RoutineExercise   (qué ejercicios y en qué orden tiene la plantilla)
+  │               └──< RoutineSet  (cada set de plantilla, con reps sugeridas)
   │       │
   └──< WorkoutSession      (un entrenamiento concreto en una fecha; pertenece
           │                 opcionalmente a un Mesocycle)
@@ -53,7 +55,7 @@ y **cada ejercicio incluye un video/animación** de cómo ejecutarlo (`media_url
 | id | uuid | PK |
 | user_id | uuid | Dueño |
 | name | text | "Bloque hipertrofia Q3" |
-| objective | enum | hipertrofia \| fuerza \| estrés_metabólico \| descarga \| otro |
+| objective | enum | hipertrofia \| fuerza \| estrés_metabólico \| descarga \| **mantenimiento** \| otro |
 | start_date | date | Inicio del bloque |
 | end_date | date | Fin del bloque |
 | notes | text | Opcional |
@@ -63,25 +65,36 @@ y **cada ejercicio incluye un video/animación** de cómo ejecutarlo (`media_url
 > hipertrofia o estrés metabólico. El análisis de volumen funciona en dos modos:
 > **por mesociclo** (sesiones del bloque) y **libre en el tiempo** (sin bloque).
 
-### Routine — plantilla de entrenamiento
+### Routine — plantilla de entrenamiento (spec: `docs/specs/ROUTINES.md`)
 | Campo | Tipo | Notas |
 |-------|------|-------|
 | id | uuid | PK |
 | user_id | uuid | Dueño |
-| name | text | "Día de empuje A" |
+| mesocycle_id | uuid \| null | Una rutina puede pertenecer a un meso o ser independiente |
+| name | text | "Día de empuje A" (obligatorio) |
 | description | text | Opcional |
 | created_at | timestamp | |
+
+> **Semántica de snapshot:** al iniciar una sesión desde una rutina, la plantilla
+> se **copia** a `session_exercises`/`set_entries`. Editar la rutina jamás afecta
+> sesiones pasadas. `workout_sessions.routine_id` es solo referencia de origen.
 
 ### RoutineExercise — ejercicio dentro de una plantilla
 | Campo | Tipo | Notas |
 |-------|------|-------|
 | id | uuid | PK |
-| routine_id | uuid | FK → Routine |
+| routine_id | uuid | FK → Routine (cascade) |
 | exercise_id | uuid | FK → Exercise |
-| order | int | Orden en la rutina |
-| target_sets | int | Series objetivo (ej. 3) |
-| target_reps | text | Reps objetivo (ej. "8-12") |
+| order_index | int | Orden en la rutina |
 | notes | text | Opcional |
+
+### RoutineSet — set de plantilla
+| Campo | Tipo | Notas |
+|-------|------|-------|
+| id | uuid | PK |
+| routine_exercise_id | uuid | FK → RoutineExercise (cascade) |
+| set_number | int | 1, 2, 3… |
+| suggested_reps | text | "8", "8-12", "AMRAP". **Nunca peso**: el peso lo propone el motor de progresión según historial |
 
 ### WorkoutSession — un entrenamiento real
 | Campo | Tipo | Notas |
