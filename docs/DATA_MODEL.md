@@ -10,12 +10,15 @@ User (auth)
   │
   ├──< Exercise            (catálogo: globales + personalizados del usuario)
   │
+  ├──< Mesocycle           (bloque de entrenamiento: fechas + objetivo)
+  │       │
   ├──< Routine             (plantilla reutilizable: "Día de empuje")
   │       └──< RoutineExercise   (qué ejercicios y en qué orden tiene la plantilla)
-  │
-  └──< WorkoutSession      (un entrenamiento concreto en una fecha)
+  │       │
+  └──< WorkoutSession      (un entrenamiento concreto en una fecha; pertenece
+          │                 opcionalmente a un Mesocycle)
           └──< SessionExercise   (un ejercicio dentro de esa sesión)
-                  └──< SetEntry  (una serie: peso, reps, RPE)
+                  └──< SetEntry  (una serie: peso, reps, RPE, tipo de set)
 ```
 
 Leyenda: `──<` significa "uno a muchos".
@@ -44,6 +47,22 @@ solo referenciamos su `id`. Todo lo demás cuelga de un `user_id`.
 y **cada ejercicio incluye un video/animación** de cómo ejecutarlo (`media_url`).
 > Pendiente: de dónde provienen esos videos (ver "Decisiones abiertas" abajo).
 
+### Mesocycle — bloque de entrenamiento con fechas y objetivo
+| Campo | Tipo | Notas |
+|-------|------|-------|
+| id | uuid | PK |
+| user_id | uuid | Dueño |
+| name | text | "Bloque hipertrofia Q3" |
+| objective | enum | hipertrofia \| fuerza \| estrés_metabólico \| descarga \| otro |
+| start_date | date | Inicio del bloque |
+| end_date | date | Fin del bloque |
+| notes | text | Opcional |
+
+> El objetivo del mesociclo **condiciona el motor de progresión**: qué pesos/sets/reps
+> se proponen para la siguiente sesión depende de si el bloque busca fuerza,
+> hipertrofia o estrés metabólico. El análisis de volumen funciona en dos modos:
+> **por mesociclo** (sesiones del bloque) y **libre en el tiempo** (sin bloque).
+
 ### Routine — plantilla de entrenamiento
 | Campo | Tipo | Notas |
 |-------|------|-------|
@@ -70,6 +89,8 @@ y **cada ejercicio incluye un video/animación** de cómo ejecutarlo (`media_url
 | id | uuid | PK |
 | user_id | uuid | Dueño |
 | routine_id | uuid \| null | Si partió de una plantilla |
+| mesocycle_id | uuid \| null | Bloque al que pertenece (null = entrenamiento libre) |
+| session_type | enum \| null | fuerza \| hipertrofia \| estrés_metabólico \| descarga — hereda del mesociclo por defecto, se puede cambiar por sesión |
 | date | timestamp | Cuándo se hizo |
 | notes | text | "Me sentí fuerte hoy" |
 | duration_min | int \| null | Duración opcional |
@@ -97,18 +118,42 @@ y **cada ejercicio incluye un video/animación** de cómo ejecutarlo (`media_url
 | weight | numeric | Peso, en la unidad definida en `SessionExercise.weight_unit` |
 | reps | int | Repeticiones realizadas |
 | rpe | numeric \| null | Esfuerzo percibido 1–10 (opcional) |
-| is_warmup | bool | Serie de calentamiento (no cuenta para PRs) |
+| set_type | enum | **Tipo de set** — valores propuestos (a confirmar): warmup \| working \| drop \| failure \| amrap \| myo_reps \| rest_pause. Solo `working` y derivados cuentan para PRs/volumen efectivo |
 | completed | bool | Marcada como hecha |
 | rest_sec | int \| null | Descanso tras la serie (opcional) |
 
+> `set_type` reemplaza al booleano `is_warmup` de la v0.1: el usuario necesita
+> distinguir múltiples tipos de set, no solo calentamiento/normal.
+> **Pendiente:** confirmar la lista exacta de tipos que usa el usuario.
+
 ## Datos derivados (NO se almacenan, se calculan)
 Estos no son tablas; se computan con consultas SQL sobre lo anterior:
-- **PRs (records):** máximo peso, 1RM estimado (fórmula Epley), máximo volumen por ejercicio.
-- **Volumen por grupo muscular:** suma de peso×reps agrupado por `muscle_group` y semana.
+- **PRs (records), como historial por ejercicio:** máximo peso y máximo volumen por
+  ejercicio, presentados como línea de tiempo (cuándo se rompió cada récord), además
+  del 1RM estimado (fórmula Epley). Solo cuentan sets efectivos (no warmup).
+- **Volumen por grupo muscular:** suma de peso×reps agrupado por `muscle_group`, en
+  tres vistas: **por sesión**, **por mesociclo** y **libre en el tiempo** (semana/mes).
 - **Progreso por ejercicio:** serie temporal de peso/volumen para los gráficos.
 
 > Mantenerlos como *cálculos* (no tablas) evita inconsistencias. Si el rendimiento
 > lo pidiera más adelante, se podrían materializar; no es necesario al inicio.
+> Nota: con unidades mixtas (kg/lb por ejercicio-sesión), los agregados normalizan
+> todo a una unidad antes de sumar.
+
+## Motor de progresión (prescripción de la siguiente sesión)
+La app analiza los resultados sesión tras sesión y **propone pesos, sets y reps para
+la siguiente**, según el objetivo del mesociclo/sesión:
+- **Entrada:** historial de `SetEntry` del ejercicio (peso, reps, RPE, tipo de set),
+  `session_type` y `Mesocycle.objective`.
+- **Salida:** prescripción por ejercicio (peso sugerido, sets × reps objetivo, descanso).
+- **Lógica según objetivo (ejemplos):** fuerza → subir peso, bajar reps; hipertrofia →
+  doble progresión (reps primero, luego peso); estrés metabólico → más volumen,
+  descansos cortos, drop sets; descarga → reducir carga/volumen.
+- La prescripción se calcula (no se almacena como verdad), pero **se guarda la
+  propuesta junto a lo realmente ejecutado** para poder comparar plan vs. realidad
+  y mejorar las reglas. Tabla futura: `Prescription` (se diseña al construir la feature).
+
+Ver ADR-008 en `DECISIONS.md` para la decisión motor de reglas vs. IA.
 
 ## Decisiones cerradas
 1. **Unidades:** ✅ por ejercicio y por sesión (`SessionExercise.weight_unit`), con `Exercise.default_unit` como sugerencia.
@@ -118,3 +163,13 @@ Estos no son tablas; se computan con consultas SQL sobre lo anterior:
 
 5. **Origen del catálogo y media:** ✅ **AscendAPI** (ex-ExerciseDB) — se importa
    vía script a la tabla `Exercise`. Ver ADR-007 en `DECISIONS.md`.
+6. **Mesociclos:** ✅ bloques con nombre, fechas y objetivo (entidad `Mesocycle`);
+   las sesiones pertenecen opcionalmente a un bloque.
+7. **Tipos de set:** ✅ se modelan con `set_type` (enum). ⚠️ Lista exacta de tipos
+   por confirmar con el usuario.
+
+## Decisiones aún abiertas
+- **Lista definitiva de tipos de set** que usa el usuario (propuestos: warmup,
+  working, drop, failure, amrap, myo_reps, rest_pause).
+- **Voz (registro y planeación de rutinas):** ruta técnica por decidir —
+  Web Speech API nativa vs. transcripción + LLM vs. híbrido. Ver PRD §4.

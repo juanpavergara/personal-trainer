@@ -56,9 +56,30 @@
 - **A confirmar al implementar:** endpoint exacto, autenticación (API key) y términos
   de uso de AscendAPI.
 
+## ADR-008 — Motor de progresión: reglas deterministas como núcleo, IA como capa opcional
+- **Decisión (tentativa, a validar con el usuario):** la prescripción de pesos/sets/reps
+  para la siguiente sesión se calcula con **algoritmos deterministas** (doble progresión,
+  autorregulación por RPE, ajustes por objetivo del mesociclo). Una capa de IA (LLM)
+  puede añadirse encima para explicar o ajustar la propuesta conversacionalmente.
+- **Por qué:** una prescripción de cargas debe ser **consistente, testeable y auditable**
+  — mismas entradas, misma salida. Las reglas son gratis, funcionan offline y no
+  dependen de servicios externos. La IA pura sería no determinista y con costo por uso.
+- **Alternativa descartada (como núcleo):** LLM decidiendo las cargas directamente.
+
 ---
 ## Decisiones de producto cerradas (ver DATA_MODEL.md)
 - ✅ Unidad de peso: por ejercicio y por sesión.
 - ✅ Catálogo base precargado, buscable/agrupado por grupo muscular, con video/animación (AscendAPI).
 - ✅ RPE opcional.
 - ✅ Solo fuerza al inicio; cardio después.
+- ✅ Mesociclos: bloques con nombre, fechas y objetivo.
+- ✅ Volumen por grupo muscular: por sesión, por mesociclo y libre en el tiempo.
+- ✅ PRs (peso máx. y volumen máx.) como historial por ejercicio.
+- ✅ Tipos de set múltiples (`set_type`).
+
+## Pendiente de decidir
+- Lista definitiva de **tipos de set** (propuestos: warmup, working, drop, failure,
+  amrap, myo_reps, rest_pause).
+- **Ruta técnica de la voz** (registro y planeación de rutinas): Web Speech API
+  nativa vs. transcripción + LLM vs. híbrido, y su prioridad.
+- Validar ADR-008 (motor de reglas + capa IA opcional) con el usuario.

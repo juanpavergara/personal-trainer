@@ -20,26 +20,43 @@ en datos que muestran progreso de forma automática.
 
 ## 4. Features priorizadas
 
-### Must-have (MVP usable desde el día 1)
+### Must-have (núcleo de la app)
 - [ ] Registro/login de usuario (cada quien sus datos).
 - [ ] Catálogo de ejercicios **agrupado y buscable por grupo muscular**, con
       **video/animación de ejecución** por ejercicio (predefinidos + crear personalizados).
 - [ ] Registrar una sesión de entrenamiento: añadir ejercicios y, por cada uno,
-      series con **peso, repeticiones y RPE (opcional)**. La **unidad (kg/lb) se elige
-      por ejercicio en cada sesión**.
+      series con **peso, repeticiones, RPE (opcional) y tipo de set** (calentamiento,
+      efectivo, drop set, al fallo…). La **unidad (kg/lb) se elige por ejercicio en
+      cada sesión**.
 - [ ] Historial por ejercicio: ver todas las series pasadas de un ejercicio.
 - [ ] Marcar series como completadas durante la sesión.
+- [ ] **Volumen por grupo muscular** en tres vistas: **por sesión**, **por mesociclo**
+      y **libre en el tiempo** (semana/mes).
+- [ ] **Records personales (PRs) como historial por ejercicio:** peso máximo y
+      volumen máximo, con su línea de tiempo (cuándo se rompió cada récord).
+- [ ] **Mesociclos:** bloques de entrenamiento con nombre, fechas y objetivo
+      (hipertrofia, fuerza, estrés metabólico, descarga).
 
-### Should-have (lo que hace la app "completa")
+### Should-have (la siguiente capa)
+- [ ] **Motor de progresión:** la app analiza los resultados sesión tras sesión y
+      **propone pesos, sets y reps para la siguiente sesión**, con cargas progresivas
+      adaptadas al objetivo del mesociclo/sesión (ej. estrés metabólico → más volumen
+      y descansos cortos). *La feature diferenciadora de la app.*
 - [ ] **Rutinas / plantillas** reutilizables (ej. "Día de empuje") que precargan ejercicios.
 - [ ] Notas por sesión y por ejercicio; tiempo de descanso.
 - [ ] **Gráficos de progreso** por ejercicio (peso/volumen en el tiempo).
-- [ ] **Records personales (PRs):** mejor peso, mejor 1RM estimado, mejor volumen.
-- [ ] **Volumen por grupo muscular** (cuánto trabajas cada grupo por semana).
+
+### A explorar (alto valor, requiere prototipo)
+- [ ] **Registro por voz:** dictar series durante la sesión ("press banca, 80 kilos,
+      8 repeticiones") sin tocar el teléfono.
+- [ ] **Planeación de rutinas por voz:** describir una rutina hablando y que la app
+      la estructure ("lunes empuje: press banca 4 por 8, fondos 3 al fallo…").
+      Ruta técnica por decidir: Web Speech API nativa vs. transcripción + LLM vs. híbrido.
 
 ### Nice-to-have (más adelante)
 - [ ] Planificación semanal / calendario de entrenamientos.
 - [ ] Temporizador de descanso integrado.
+- [ ] Cardio (distancia, duración) — el modelo lo prevé, se añade después.
 - [ ] Exportar datos (CSV).
 - [ ] Modo offline completo (registrar sin señal y sincronizar después).
 

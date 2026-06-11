@@ -3,7 +3,8 @@
     "allow": [
       "Bash(git init *)",
       "Bash(git add *)",
-      "Bash(git commit -q -m 'docs: documentación inicial del proyecto \\(PRD, modelo de datos, decisiones\\) *)"
+      "Bash(git commit -q -m 'docs: documentación inicial del proyecto \\(PRD, modelo de datos, decisiones\\) *)",
+      "Bash(git commit -q -m 'docs: mesociclos, motor de progresión, tipos de set, PRs/volumen priorizados, voz a explorar *)"
     ]
   }
 }

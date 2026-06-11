@@ -4,9 +4,12 @@ Este archivo se carga automáticamente en cada sesión. Mantiene a Claude orient
 Mantenerlo corto y actualizado.
 
 ## Qué es esto
-App de tracking de rutinas de gimnasio. PWA móvil, multiusuario (cada quien sus datos),
-tracking completo (series con peso/reps/RPE, rutinas, gráficos de progreso, PRs,
-volumen por grupo muscular). Detalle en `docs/PRD.md`.
+App de tracking de rutinas de gimnasio. PWA móvil (instalable desde el browser,
+se usa como app), multiusuario (cada quien sus datos). Tracking completo: series con
+peso/reps/RPE/tipo de set, mesociclos (bloques con objetivo), volumen por grupo
+muscular (sesión/mesociclo/tiempo), PRs como historial, y un **motor de progresión**
+que propone cargas para la siguiente sesión. Voz (registro y planeación) a explorar.
+Detalle en `docs/PRD.md`.
 
 ## Stack (ver `docs/DECISIONS.md` para el porqué)
 - **Frontend:** Next.js (App Router) + TypeScript, como PWA.
@@ -20,6 +23,12 @@ volumen por grupo muscular). Detalle en `docs/PRD.md`.
 - Unidad de peso: por ejercicio y por sesión (`SessionExercise.weight_unit`).
 - Catálogo precargado, buscable/agrupado por grupo muscular, con video/animación.
 - RPE opcional. Solo fuerza al inicio (cardio después).
+- Mesociclos = bloques con nombre, fechas y objetivo; condicionan el motor de progresión.
+- Motor de progresión: reglas deterministas como núcleo, IA opcional encima (ADR-008, a validar).
+
+## Abierto (no codear sin cerrar)
+- Lista definitiva de tipos de set.
+- Ruta técnica y prioridad de la voz.
 
 ## Documentación clave
 - `docs/PRD.md` — visión y features priorizadas.
