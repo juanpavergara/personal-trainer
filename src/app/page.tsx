@@ -1,24 +1,70 @@
-export default function Home() {
+import Link from "next/link";
+import { desc, eq } from "drizzle-orm";
+import { db } from "@/db";
+import { workoutSessions } from "@/db/schema";
+import { getUser } from "@/lib/supabase/server";
+import { createSession } from "./actions";
+import { logout } from "./login/actions";
+
+export default async function Home() {
+  const user = await getUser();
+  if (!user) return null; // el proxy redirige a /login
+
+  const sessions = await db
+    .select()
+    .from(workoutSessions)
+    .where(eq(workoutSessions.userId, user.id))
+    .orderBy(desc(workoutSessions.date))
+    .limit(20);
+
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-6 p-8 text-center">
-      <svg viewBox="0 0 512 512" className="h-20 w-20" aria-hidden="true">
-        <rect width="512" height="512" rx="96" className="fill-neutral-900" />
-        <g className="stroke-green-500" strokeWidth="40" strokeLinecap="round">
-          <line x1="96" y1="186" x2="96" y2="326" />
-          <line x1="166" y1="146" x2="166" y2="366" />
-          <line x1="416" y1="186" x2="416" y2="326" />
-          <line x1="346" y1="146" x2="346" y2="366" />
-          <line x1="166" y1="256" x2="346" y2="256" />
-        </g>
-      </svg>
-      <h1 className="text-3xl font-bold tracking-tight">Gym Tracker</h1>
-      <p className="max-w-sm text-neutral-400">
-        Series, mesociclos, PRs y progresión de cargas. En construcción —
-        primera URL viva del proyecto.
-      </p>
-      <p className="rounded-full bg-neutral-900 px-4 py-1 text-sm text-green-500">
-        Despliegue verificado ✓
-      </p>
+    <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 p-5">
+      <header className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight">Gym Tracker</h1>
+        <form action={logout}>
+          <button className="text-sm text-neutral-500 active:text-neutral-300">
+            Salir
+          </button>
+        </form>
+      </header>
+
+      <form action={createSession}>
+        <button className="w-full rounded-xl bg-green-600 px-4 py-4 text-lg font-semibold text-white active:bg-green-700">
+          + Nueva sesión
+        </button>
+      </form>
+
+      <section className="flex flex-col gap-2">
+        <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+          Sesiones recientes
+        </h2>
+        {sessions.length === 0 && (
+          <p className="rounded-xl bg-neutral-900 p-4 text-neutral-400">
+            Aún no hay sesiones. Empieza tu primer entrenamiento.
+          </p>
+        )}
+        {sessions.map((s) => (
+          <Link
+            key={s.id}
+            href={`/session/${s.id}`}
+            className="flex items-center justify-between rounded-xl bg-neutral-900 p-4 active:bg-neutral-800"
+          >
+            <span className="font-medium">
+              {new Date(s.date).toLocaleDateString("es", {
+                weekday: "short",
+                day: "numeric",
+                month: "short",
+              })}
+            </span>
+            <span className="text-sm text-neutral-500">
+              {new Date(s.date).toLocaleTimeString("es", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          </Link>
+        ))}
+      </section>
     </main>
   );
 }

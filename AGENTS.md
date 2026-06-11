@@ -54,8 +54,19 @@ que propone cargas para la siguiente sesión. Registro y planeación de rutinas 
 - Desarrollo local: `npm run dev`
 - Build (verificación): `npm run build`
 - Lint: `npm run lint`
-- Migraciones: `npx drizzle-kit ...` (cuando se integre Drizzle)
+- Migraciones: `npx drizzle-kit generate` → `npx drizzle-kit migrate`
+- Seed catálogo provisional: `node scripts/seed-exercises.mjs` (idempotente)
 - Desplegar: automático al hacer push a la rama (Vercel).
+
+## Auth
+- Supabase Auth email+password vía `@supabase/ssr`. Clientes en `src/lib/supabase/`,
+  protección de rutas en `src/proxy.ts` (Next 16 renombró middleware → proxy).
+- La publishable key (`sb_publishable_*`) es la "anon key" moderna; va en
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- ⚠️ La validación de emails de Supabase rechaza direcciones "de prueba"
+  (email_address_invalid) y el email service del free tier tiene rate limit bajo.
+- Autorización de datos: en código de servidor, TODA query filtra por `user_id`
+  del usuario autenticado (RLS está en deny-all; no confiar solo en él).
 
 ## Base de datos
 - Supabase proyecto `nipfjvyircdktpwgoiux` (us-west-2). Credenciales en `.env.local`
@@ -75,11 +86,15 @@ que propone cargas para la siguiente sesión. Registro y planeación de rutinas 
 - [x] Esqueleto Next.js (TS + Tailwind, App Router, src/).
 - [x] Supabase conectado; esquema completo (7 tablas + 4 enums) migrado y verificado.
 - [x] Vercel desplegado y verificado: https://personal-trainer-ashen.vercel.app
-- [ ] Usuario: pasar la anon key de Supabase (Settings → API Keys) para la capa de auth,
-      y cargar las variables de `.env.local` en Vercel (Settings → Environment Variables)
-      antes de desplegar código que use la BD. **Requiere acción del usuario.**
-      Para la voz se necesitará además una API key de STT/LLM (al implementar esa capa).
-- [ ] Script de importación del catálogo desde AscendAPI.
-- [ ] Auth (login) con Supabase.
-- [ ] Primera rebanada vertical: registrar una serie y verla en historial.
-- [ ] Capa de voz (registro de series y planeación de rutinas).
+- [x] Auth (login/signup/logout) con Supabase + protección de rutas (verificado local).
+- [x] Primera rebanada vertical CONSTRUIDA: dashboard → nueva sesión → añadir
+      ejercicio (unidad kg/lb por ejercicio-sesión) → registrar series (tipo de set,
+      RPE) → historial por ejercicio. Catálogo provisional sembrado (21 ejercicios).
+- [ ] Usuario: (1) cargar en Vercel las env vars de `.env.local` (DATABASE_URL,
+      NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY) y redeploy;
+      (2) en Supabase desactivar "Confirm email" (Auth → Sign In / Up) o configurar
+      Site URL + plantilla con token_hash. **Requiere acción del usuario.**
+- [ ] Verificar la rebanada en producción (login real + registrar serie en el móvil).
+- [ ] Script de importación del catálogo desde AscendAPI (reemplaza el seed).
+- [ ] Capa de voz (registro de series y planeación de rutinas). Necesita API key STT/LLM.
+- [ ] Mesociclos, volumen por grupo muscular, PRs, motor de progresión, rutinas.
