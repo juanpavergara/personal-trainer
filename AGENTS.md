@@ -56,12 +56,27 @@ que propone cargas para la siguiente sesión. Registro y planeación de rutinas 
 - Migraciones: `npx drizzle-kit ...` (cuando se integre Drizzle)
 - Desplegar: automático al hacer push a la rama (Vercel).
 
+## Base de datos
+- Supabase proyecto `nipfjvyircdktpwgoiux` (us-west-2). Credenciales en `.env.local`
+  (NUNCA commitearlas; plantilla en `.env.example`).
+- Conexión vía pooler `aws-1-us-west-2.pooler.supabase.com`: app en transaction mode
+  (puerto 6543, `prepare:false`), migraciones en session mode (5432). El host directo
+  `db.*.supabase.co` es IPv6-only y esta red no tiene IPv6.
+- Esquema en `src/db/schema.ts`; migraciones versionadas en `drizzle/`.
+  Aplicar: `npx drizzle-kit generate` → `npx drizzle-kit migrate`.
+- Las 7 tablas tienen **RLS activado sin políticas** (deny-all vía PostgREST):
+  el acceso a datos va por el servidor Next (Drizzle). Si se crean políticas RLS,
+  documentar el porqué.
+
 ## Estado actual
 - [x] Documentación de fase 0 COMPLETA (PRD, modelo de datos, 10 ADRs). Sin decisiones abiertas.
 - [x] Repo GitHub conectado: juanpavergara/personal-trainer (HTTPS vía gh).
 - [x] Esqueleto Next.js (TS + Tailwind, App Router, src/).
-- [ ] Usuario: crear proyecto Supabase y conectar repo en Vercel. **Requiere acción del usuario.**
+- [x] Supabase conectado; esquema completo (7 tablas + 4 enums) migrado y verificado.
+- [ ] Usuario: conectar repo en Vercel (primera URL viva) y pasar la anon key de
+      Supabase (Settings → API) para la capa de auth. **Requiere acción del usuario.**
       Para la voz se necesitará además una API key de STT/LLM (al implementar esa capa).
 - [ ] Script de importación del catálogo desde AscendAPI.
+- [ ] Auth (login) con Supabase.
 - [ ] Primera rebanada vertical: registrar una serie y verla en historial.
 - [ ] Capa de voz (registro de series y planeación de rutinas).
