@@ -34,6 +34,13 @@ export default async function Home() {
         </button>
       </form>
 
+      <Link
+        href="/routines"
+        className="w-full rounded-xl border border-neutral-800 px-4 py-4 text-center text-lg font-semibold text-neutral-200 active:bg-neutral-900"
+      >
+        Mis rutinas
+      </Link>
+
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">
           Sesiones recientes

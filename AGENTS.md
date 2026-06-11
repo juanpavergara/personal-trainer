@@ -95,6 +95,13 @@ que propone cargas para la siguiente sesión. Registro y planeación de rutinas 
       (2) en Supabase desactivar "Confirm email" (Auth → Sign In / Up) o configurar
       Site URL + plantilla con token_hash. **Requiere acción del usuario.**
 - [ ] Verificar la rebanada en producción (login real + registrar serie en el móvil).
-- [ ] Script de importación del catálogo desde AscendAPI (reemplaza el seed).
+- [x] Rutinas Fase A (modelo: routine_sets, mesocycle_id, maintenance) — migrado.
+- [x] Rutinas Fase B (CRUD): crear/listar/editar/eliminar rutinas, sets con reps
+      sugeridas, volumen de plantilla (sets por grupo muscular), GIFs si hay media.
+- [ ] Rutinas Fase C: iniciar sesión desde rutina (snapshot completo) + desvíos.
+- [ ] Catálogo completo: AscendAPI free = demo de 25 ej. RapidAPI solo tiene planes
+      de pago (usuario verificó). DECISIÓN PENDIENTE: pagar vs. dataset open source
+      (yuhonas/free-exercise-db, ~870 ej., MIT, imágenes estáticas).
 - [ ] Capa de voz (registro de series y planeación de rutinas). Necesita API key STT/LLM.
-- [ ] Mesociclos, volumen por grupo muscular, PRs, motor de progresión, rutinas.
+- [ ] Mesociclos UI, volumen por grupo muscular (analytics), PRs, motor de progresión.
+- [ ] Deuda: latencia alta de la app (BD en us-west-2 + sin UI optimista) — optimizar.
