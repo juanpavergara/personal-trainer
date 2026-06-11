@@ -66,6 +66,22 @@
   dependen de servicios externos. La IA pura sería no determinista y con costo por uso.
 - **Alternativa descartada (como núcleo):** LLM decidiendo las cargas directamente.
 
+## ADR-009 — Tipos de set: enum de 6 valores, fallo como RPE/RIR, fundamentado en evidencia
+- **Decisión:** `set_type` ∈ {warmup, working, drop, rest_pause, myo_reps, amrap}.
+  "Al fallo" NO es un tipo: se registra como RPE 10 / RIR 0 (el esfuerzo se puede
+  ver como RPE o RIR, misma escala invertida). Superseries = agrupación estructural
+  futura (`superset_group`), no tipo de set.
+- **Por qué (literatura, jun 2026):**
+  - Meta-análisis: drop sets, rest-pause y myo-reps producen hipertrofia similar a
+    series tradicionales con volumen/esfuerzo igualados; su valor es eficiencia de
+    tiempo → son tipos porque cambian cómo se computa el volumen, no categorías "mágicas".
+  - La proximidad al fallo es un continuo con efecto modesto en hipertrofia y nulo en
+    fuerza (Robinson 2024; Refalo 2024) → mejor dato como RPE/RIR que como etiqueta.
+  - AMRAP es prescripción abierta: la mejor fuente para estimar 1RM y calibrar el
+    motor de progresión.
+- **Fuentes:** Sports Med Open 2023 (drop sets); meta-análisis de sistemas avanzados
+  (PMC12922048); Refalo et al. 2024 (J Sports Sci); Robinson et al. 2024 (Sports Med).
+
 ---
 ## Decisiones de producto cerradas (ver DATA_MODEL.md)
 - ✅ Unidad de peso: por ejercicio y por sesión.
@@ -75,11 +91,10 @@
 - ✅ Mesociclos: bloques con nombre, fechas y objetivo.
 - ✅ Volumen por grupo muscular: por sesión, por mesociclo y libre en el tiempo.
 - ✅ PRs (peso máx. y volumen máx.) como historial por ejercicio.
-- ✅ Tipos de set múltiples (`set_type`).
+- ✅ Tipos de set confirmados: warmup, working, drop, rest_pause, myo_reps, amrap (ADR-009).
+- ✅ Esfuerzo registrable como RPE o RIR; fallo = RPE 10 / RIR 0.
 
 ## Pendiente de decidir
-- Lista definitiva de **tipos de set** (propuestos: warmup, working, drop, failure,
-  amrap, myo_reps, rest_pause).
 - **Ruta técnica de la voz** (registro y planeación de rutinas): Web Speech API
   nativa vs. transcripción + LLM vs. híbrido, y su prioridad.
 - Validar ADR-008 (motor de reglas + capa IA opcional) con el usuario.

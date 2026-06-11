@@ -117,14 +117,21 @@ y **cada ejercicio incluye un video/animación** de cómo ejecutarlo (`media_url
 | set_number | int | 1, 2, 3… |
 | weight | numeric | Peso, en la unidad definida en `SessionExercise.weight_unit` |
 | reps | int | Repeticiones realizadas |
-| rpe | numeric \| null | Esfuerzo percibido 1–10 (opcional) |
-| set_type | enum | **Tipo de set** — valores propuestos (a confirmar): warmup \| working \| drop \| failure \| amrap \| myo_reps \| rest_pause. Solo `working` y derivados cuentan para PRs/volumen efectivo |
+| rpe | numeric \| null | Esfuerzo percibido 1–10, opcional. Se puede registrar/mostrar también como **RIR** (reps en reserva): RIR = 10 − RPE. RPE 10 / RIR 0 = al fallo |
+| set_type | enum | **Confirmado:** warmup \| working \| drop \| rest_pause \| myo_reps \| amrap. Default: `working` |
 | completed | bool | Marcada como hecha |
 | rest_sec | int \| null | Descanso tras la serie (opcional) |
 
-> `set_type` reemplaza al booleano `is_warmup` de la v0.1: el usuario necesita
-> distinguir múltiples tipos de set, no solo calentamiento/normal.
-> **Pendiente:** confirmar la lista exacta de tipos que usa el usuario.
+> **Diseño del `set_type` (fundamentado en literatura — ver ADR-009):**
+> - `warmup` se excluye de volumen efectivo y PRs.
+> - `drop`, `rest_pause`, `myo_reps`: técnicas de eficiencia; sus sub-series cuentan
+>   para el volumen.
+> - `amrap`: prescripción abierta (máximas reps posibles); fuente principal para
+>   estimar 1RM en el motor de progresión.
+> - **"Al fallo" NO es un tipo de set:** se captura con RPE 10 / RIR 0 — la evidencia
+>   trata la proximidad al fallo como continuo, no como etiqueta binaria.
+> - **Superseries NO son tipo de set:** son agrupación estructural entre ejercicios;
+>   cuando se necesiten, será un campo `superset_group` en `SessionExercise`.
 
 ## Datos derivados (NO se almacenan, se calculan)
 Estos no son tablas; se computan con consultas SQL sobre lo anterior:
@@ -165,11 +172,10 @@ Ver ADR-008 en `DECISIONS.md` para la decisión motor de reglas vs. IA.
    vía script a la tabla `Exercise`. Ver ADR-007 en `DECISIONS.md`.
 6. **Mesociclos:** ✅ bloques con nombre, fechas y objetivo (entidad `Mesocycle`);
    las sesiones pertenecen opcionalmente a un bloque.
-7. **Tipos de set:** ✅ se modelan con `set_type` (enum). ⚠️ Lista exacta de tipos
-   por confirmar con el usuario.
+7. **Tipos de set:** ✅ confirmados: warmup, working, drop, rest_pause, myo_reps,
+   amrap. "Al fallo" se captura vía RPE/RIR, no como tipo (ADR-009).
 
 ## Decisiones aún abiertas
-- **Lista definitiva de tipos de set** que usa el usuario (propuestos: warmup,
-  working, drop, failure, amrap, myo_reps, rest_pause).
 - **Voz (registro y planeación de rutinas):** ruta técnica por decidir —
   Web Speech API nativa vs. transcripción + LLM vs. híbrido. Ver PRD §4.
+- **Motor de progresión:** validar enfoque reglas + IA opcional (ADR-008).

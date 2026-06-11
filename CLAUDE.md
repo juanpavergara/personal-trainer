@@ -26,9 +26,12 @@ Detalle en `docs/PRD.md`.
 - Mesociclos = bloques con nombre, fechas y objetivo; condicionan el motor de progresión.
 - Motor de progresión: reglas deterministas como núcleo, IA opcional encima (ADR-008, a validar).
 
+- Tipos de set: warmup, working, drop, rest_pause, myo_reps, amrap. Fallo = RPE 10/RIR 0,
+  no es tipo de set (ADR-009).
+
 ## Abierto (no codear sin cerrar)
-- Lista definitiva de tipos de set.
 - Ruta técnica y prioridad de la voz.
+- Validar ADR-008 (motor de progresión: reglas + IA opcional).
 
 ## Documentación clave
 - `docs/PRD.md` — visión y features priorizadas.

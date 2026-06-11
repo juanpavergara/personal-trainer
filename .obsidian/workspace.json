@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/PRD.md",
+                "file": "docs/DECISIONS.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "PRD"
+              "title": "DECISIONS"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/PRD.md",
+                "file": "docs/DECISIONS.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for PRD"
+              "title": "Backlinks for DECISIONS"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/PRD.md",
+                "file": "docs/DECISIONS.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from PRD"
+              "title": "Outgoing links from DECISIONS"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/PRD.md",
+                "file": "docs/DECISIONS.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of PRD"
+              "title": "Outline of DECISIONS"
             }
           }
         ]
@@ -185,8 +185,8 @@
   },
   "active": "cd8d1077bc741b82",
   "lastOpenFiles": [
-    "docs/DECISIONS.md",
     "docs/PRD.md",
+    "docs/DECISIONS.md",
     "docs/DATA_MODEL.md",
     "CLAUDE.md"
   ]
