@@ -10,6 +10,7 @@ import {
   routineSets,
 } from "@/db/schema";
 import { getUser } from "@/lib/supabase/server";
+import { Input, PrimaryButton, Select, SectionLabel } from "@/components/ui";
 import {
   addExerciseToRoutine,
   addRoutineSet,
@@ -80,131 +81,121 @@ export default async function RoutineEditorPage({
     .orderBy(asc(exercises.muscleGroup), asc(exercises.name));
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 p-5">
-      <header className="flex items-center gap-3">
-        <Link
-          href="/routines"
-          className="text-neutral-500 active:text-neutral-300"
-        >
+    <main className="mx-auto flex w-full max-w-md flex-1 flex-col">
+      <header className="flex items-center gap-3 px-4 pb-4 pt-6">
+        <Link href="/routines" className="text-ink-muted active:text-ink">
           ←
         </Link>
-        <h1 className="flex-1 text-xl font-bold">{routine.name}</h1>
+        <h1 className="flex-1 text-lg font-semibold">{routine.name}</h1>
         <form action={deleteRoutine}>
           <input type="hidden" name="routineId" value={id} />
-          <button className="text-sm text-red-500 active:text-red-400">
+          <button className="text-sm text-danger active:opacity-70">
             Eliminar
           </button>
         </form>
       </header>
 
       {setsByGroup.size > 0 && (
-        <section className="rounded-xl bg-neutral-900 p-4">
-          <h2 className="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-500">
-            Volumen de la plantilla (sets por grupo)
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {[...setsByGroup.entries()].map(([group, n]) => (
-              <span
-                key={group}
-                className="rounded-full bg-neutral-800 px-3 py-1 text-sm"
-              >
-                {group} <strong className="text-green-500">{n}</strong>
+        <div className="bg-surface px-4 py-3">
+          <SectionLabel>Volumen de la plantilla</SectionLabel>
+          <p className="mt-1.5 text-sm text-ink-soft">
+            {[...setsByGroup.entries()].map(([group, n], i) => (
+              <span key={group}>
+                {i > 0 && <span className="text-ink-faint"> · </span>}
+                {group}{" "}
+                <strong className="font-semibold text-accent">{n}</strong>
               </span>
             ))}
-          </div>
-        </section>
+          </p>
+        </div>
       )}
 
       {items.map(({ re, exerciseName, muscleGroup, mediaUrl }) => {
         const exerciseSets = sets.filter((s) => s.routineExerciseId === re.id);
         return (
-          <section key={re.id} className="rounded-xl bg-neutral-900 p-4">
-            <div className="mb-3 flex items-center gap-3">
+          <section key={re.id}>
+            <div className="mt-4 flex items-center gap-3 bg-surface-alt px-4 py-3">
               {mediaUrl && (
                 <img
                   src={mediaUrl}
                   alt={`Ejecución de ${exerciseName}`}
-                  className="h-12 w-12 rounded-lg bg-white object-cover"
+                  className="h-12 w-12 bg-white object-cover"
                   loading="lazy"
                 />
               )}
-              <div className="flex-1">
-                <p className="font-semibold">{exerciseName}</p>
-                <p className="text-xs text-neutral-500">{muscleGroup}</p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium">{exerciseName}</p>
+                <p className="text-xs text-ink-muted">{muscleGroup}</p>
               </div>
               <form action={removeExerciseFromRoutine}>
                 <input type="hidden" name="routineId" value={id} />
                 <input type="hidden" name="routineExerciseId" value={re.id} />
-                <button className="text-sm text-neutral-600 active:text-red-500">
+                <button className="px-1 text-ink-faint active:text-danger">
                   ✕
                 </button>
               </form>
             </div>
 
-            <ul className="mb-3 flex flex-col gap-1">
-              {exerciseSets.map((s) => (
-                <li
-                  key={s.id}
-                  className="flex items-center justify-between border-t border-neutral-800 py-1.5 text-sm"
-                >
-                  <span>
-                    <span className="text-neutral-500">Set {s.setNumber}</span>{" "}
-                    · {s.suggestedReps} reps
-                  </span>
-                  <form action={removeRoutineSet}>
-                    <input type="hidden" name="routineId" value={id} />
-                    <input
-                      type="hidden"
-                      name="routineExerciseId"
-                      value={re.id}
-                    />
-                    <input type="hidden" name="setId" value={s.id} />
-                    <button className="px-2 text-neutral-600 active:text-red-500">
-                      −
-                    </button>
-                  </form>
-                </li>
-              ))}
-            </ul>
+            <div className="bg-surface px-4 py-2">
+              <ul>
+                {exerciseSets.map((s) => (
+                  <li
+                    key={s.id}
+                    className="flex items-center justify-between py-1.5 text-sm"
+                  >
+                    <span className="text-ink-soft">
+                      <span className="text-ink-muted">Set {s.setNumber}</span>{" "}
+                      · {s.suggestedReps} reps
+                    </span>
+                    <form action={removeRoutineSet}>
+                      <input type="hidden" name="routineId" value={id} />
+                      <input
+                        type="hidden"
+                        name="routineExerciseId"
+                        value={re.id}
+                      />
+                      <input type="hidden" name="setId" value={s.id} />
+                      <button className="px-2 text-ink-faint active:text-danger">
+                        −
+                      </button>
+                    </form>
+                  </li>
+                ))}
+              </ul>
 
-            <form action={addRoutineSet} className="flex gap-2">
-              <input type="hidden" name="routineId" value={id} />
-              <input type="hidden" name="routineExerciseId" value={re.id} />
-              <input
-                name="suggestedReps"
-                placeholder="Reps sugeridas (ej. 8-12)"
-                className="flex-1 rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm outline-none focus:border-green-600"
-              />
-              <button className="rounded-lg bg-neutral-800 px-3 py-2 text-sm font-semibold active:bg-neutral-700">
-                + set
-              </button>
-            </form>
+              <form action={addRoutineSet} className="flex gap-2 py-2">
+                <input type="hidden" name="routineId" value={id} />
+                <input type="hidden" name="routineExerciseId" value={re.id} />
+                <Input
+                  name="suggestedReps"
+                  placeholder="Reps sugeridas (ej. 8-12)"
+                  className="min-w-0 flex-1 text-sm"
+                />
+                <button className="px-3 text-sm font-medium text-accent active:opacity-70">
+                  + set
+                </button>
+              </form>
+            </div>
           </section>
         );
       })}
 
-      <section className="rounded-xl border border-dashed border-neutral-800 p-4">
-        <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-neutral-500">
-          Añadir ejercicio
-        </h2>
+      <div className="px-4 pb-2 pt-6">
+        <SectionLabel>Añadir ejercicio</SectionLabel>
+      </div>
+      <div className="bg-surface px-4 py-3">
         <form action={addExerciseToRoutine} className="flex gap-2">
           <input type="hidden" name="routineId" value={id} />
-          <select
-            name="exerciseId"
-            required
-            className="min-w-0 flex-1 rounded-lg border border-neutral-800 bg-neutral-950 px-2 py-2.5 text-base"
-          >
+          <Select name="exerciseId" required className="min-w-0 flex-1">
             {catalog.map((e) => (
               <option key={e.id} value={e.id}>
                 {e.name} ({e.muscleGroup})
               </option>
             ))}
-          </select>
-          <button className="rounded-lg bg-green-600 px-4 py-2.5 font-semibold text-white active:bg-green-700">
-            +
-          </button>
+          </Select>
+          <PrimaryButton>+</PrimaryButton>
         </form>
-      </section>
+      </div>
     </main>
   );
 }

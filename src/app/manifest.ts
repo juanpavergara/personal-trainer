@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Tracking de rutinas de gimnasio: series, mesociclos, PRs y progresión",
     start_url: "/",
     display: "standalone",
-    background_color: "#0a0a0a",
-    theme_color: "#0a0a0a",
+    background_color: "#F4F7FA",
+    theme_color: "#F4F7FA",
     icons: [
       {
         src: "/icon.svg",

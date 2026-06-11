@@ -1,26 +1,28 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Design language "D1 · Azul sutil" — ver docs/DESIGN.md.
+   Light siempre: sin modo oscuro, sin bordes, sin esquinas redondeadas. */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+@theme {
+  --color-base: #f4f7fa;
+  --color-surface: #ffffff;
+  --color-surface-alt: #ebf1f6;
+  --color-ink: #18222a;
+  --color-ink-soft: #44525e;
+  --color-ink-muted: #7c8b97;
+  --color-ink-faint: #93a1ac;
+  --color-accent: #0f6e56;
+  --color-danger: #a32d2d;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light only;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-base);
+  color: var(--color-ink);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
