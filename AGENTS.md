@@ -25,6 +25,7 @@ que propone cargas para la siguiente sesión. Registro y planeación de rutinas 
 - **Catálogo de ejercicios + media:** AscendAPI (ex-ExerciseDB), importado por script.
 - **Hosting:** Vercel (deploy automático por push; preview por rama).
 - **Repo:** https://github.com/juanpavergara/personal-trainer
+- **URL producción:** https://personal-trainer-ashen.vercel.app
 
 ## Decisiones de producto fijadas
 - Unidad de peso: por ejercicio y por sesión (`SessionExercise.weight_unit`).
@@ -73,8 +74,10 @@ que propone cargas para la siguiente sesión. Registro y planeación de rutinas 
 - [x] Repo GitHub conectado: juanpavergara/personal-trainer (HTTPS vía gh).
 - [x] Esqueleto Next.js (TS + Tailwind, App Router, src/).
 - [x] Supabase conectado; esquema completo (7 tablas + 4 enums) migrado y verificado.
-- [ ] Usuario: conectar repo en Vercel (primera URL viva) y pasar la anon key de
-      Supabase (Settings → API) para la capa de auth. **Requiere acción del usuario.**
+- [x] Vercel desplegado y verificado: https://personal-trainer-ashen.vercel.app
+- [ ] Usuario: pasar la anon key de Supabase (Settings → API Keys) para la capa de auth,
+      y cargar las variables de `.env.local` en Vercel (Settings → Environment Variables)
+      antes de desplegar código que use la BD. **Requiere acción del usuario.**
       Para la voz se necesitará además una API key de STT/LLM (al implementar esa capa).
 - [ ] Script de importación del catálogo desde AscendAPI.
 - [ ] Auth (login) con Supabase.
