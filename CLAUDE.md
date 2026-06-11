@@ -8,8 +8,8 @@ App de tracking de rutinas de gimnasio. PWA móvil (instalable desde el browser,
 se usa como app), multiusuario (cada quien sus datos). Tracking completo: series con
 peso/reps/RPE/tipo de set, mesociclos (bloques con objetivo), volumen por grupo
 muscular (sesión/mesociclo/tiempo), PRs como historial, y un **motor de progresión**
-que propone cargas para la siguiente sesión. Voz (registro y planeación) a explorar.
-Detalle en `docs/PRD.md`.
+que propone cargas para la siguiente sesión. Registro y planeación de rutinas **por voz**
+(Whisper + LLM) desde el inicio. Detalle en `docs/PRD.md`.
 
 ## Stack (ver `docs/DECISIONS.md` para el porqué)
 - **Frontend:** Next.js (App Router) + TypeScript, como PWA.
@@ -24,14 +24,10 @@ Detalle en `docs/PRD.md`.
 - Catálogo precargado, buscable/agrupado por grupo muscular, con video/animación.
 - RPE opcional. Solo fuerza al inicio (cardio después).
 - Mesociclos = bloques con nombre, fechas y objetivo; condicionan el motor de progresión.
-- Motor de progresión: reglas deterministas como núcleo, IA opcional encima (ADR-008, a validar).
-
+- Motor de progresión: reglas deterministas como núcleo, IA opcional encima (ADR-008 ✅).
+- Voz desde el inicio, ruta Whisper + LLM; siempre con confirmación en pantalla (ADR-010).
 - Tipos de set: warmup, working, drop, rest_pause, myo_reps, amrap. Fallo = RPE 10/RIR 0,
   no es tipo de set (ADR-009).
-
-## Abierto (no codear sin cerrar)
-- Ruta técnica y prioridad de la voz.
-- Validar ADR-008 (motor de progresión: reglas + IA opcional).
 
 ## Documentación clave
 - `docs/PRD.md` — visión y features priorizadas.
@@ -53,9 +49,10 @@ Detalle en `docs/PRD.md`.
 - Desplegar: automático al hacer push a la rama (Vercel).
 
 ## Estado actual
-- [x] Documentación inicial (PRD, modelo de datos, decisiones).
-- [x] Decisiones de producto cerradas (unidades, catálogo+media, RPE, alcance).
+- [x] Documentación de fase 0 COMPLETA (PRD, modelo de datos, 10 ADRs). Sin decisiones abiertas.
 - [ ] Crear cuentas: GitHub (repo), Supabase (proyecto), Vercel. **Requiere acción del usuario.**
+      Para la voz se necesitará además una API key de STT/LLM (al implementar esa capa).
 - [ ] Esqueleto Next.js + Supabase + primera URL desplegada.
 - [ ] Script de importación del catálogo desde AscendAPI.
 - [ ] Primera rebanada vertical: registrar una serie y verla en historial.
+- [ ] Capa de voz (registro de series y planeación de rutinas).

@@ -175,7 +175,8 @@ Ver ADR-008 en `DECISIONS.md` para la decisión motor de reglas vs. IA.
 7. **Tipos de set:** ✅ confirmados: warmup, working, drop, rest_pause, myo_reps,
    amrap. "Al fallo" se captura vía RPE/RIR, no como tipo (ADR-009).
 
-## Decisiones aún abiertas
-- **Voz (registro y planeación de rutinas):** ruta técnica por decidir —
-  Web Speech API nativa vs. transcripción + LLM vs. híbrido. Ver PRD §4.
-- **Motor de progresión:** validar enfoque reglas + IA opcional (ADR-008).
+8. **Voz:** ✅ desde el inicio, ruta Whisper + LLM (ADR-010). El LLM produce datos
+   que el usuario confirma en pantalla antes de guardar — no escribe a la BD directo.
+9. **Motor de progresión:** ✅ reglas deterministas + capa IA opcional (ADR-008).
+
+*No quedan decisiones abiertas de fase 0.*

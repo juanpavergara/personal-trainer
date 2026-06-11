@@ -57,7 +57,8 @@
   de uso de AscendAPI.
 
 ## ADR-008 — Motor de progresión: reglas deterministas como núcleo, IA como capa opcional
-- **Decisión (tentativa, a validar con el usuario):** la prescripción de pesos/sets/reps
+- **Estado: ✅ aceptada por el usuario.**
+- **Decisión:** la prescripción de pesos/sets/reps
   para la siguiente sesión se calcula con **algoritmos deterministas** (doble progresión,
   autorregulación por RPE, ajustes por objetivo del mesociclo). Una capa de IA (LLM)
   puede añadirse encima para explicar o ajustar la propuesta conversacionalmente.
@@ -82,6 +83,25 @@
 - **Fuentes:** Sports Med Open 2023 (drop sets); meta-análisis de sistemas avanzados
   (PMC12922048); Refalo et al. 2024 (J Sports Sci); Robinson et al. 2024 (Sports Med).
 
+## ADR-010 — Voz: transcripción (Whisper) + LLM, desde el inicio
+- **Decisión:** el registro de series por voz y la planeación de rutinas por voz se
+  construyen **desde el inicio** (must-have) con la ruta **transcripción + LLM**:
+  el audio se transcribe (Whisper o servicio equivalente) y un LLM convierte el texto
+  en datos estructurados (series con peso/reps/RPE, o rutinas completas).
+- **Por qué:** el lenguaje natural libre ("lunes empuje: press banca 4 por 8, fondos
+  al fallo…") exige interpretación semántica que la Web Speech API nativa no da; la
+  ruta IA es robusta al ruido del gimnasio y sirve igual para ambos casos de uso.
+- **Implicaciones:**
+  - Requiere API keys de servicios de IA como variables de entorno (Vercel) y tiene
+    un costo pequeño por uso.
+  - La voz es una **capa sobre la app**: todo debe poder hacerse también a mano.
+    El LLM devuelve una propuesta estructurada que el usuario **confirma en pantalla**
+    antes de guardarse (nunca escribe a la BD sin confirmación).
+  - Proveedor/modelo exacto de STT y de parsing: se elige al implementar, verificando
+    precios y disponibilidad del momento.
+- **Alternativa descartada:** Web Speech API nativa como ruta principal (calidad
+  irregular entre navegadores y con ruido; insuficiente para rutinas complejas).
+
 ---
 ## Decisiones de producto cerradas (ver DATA_MODEL.md)
 - ✅ Unidad de peso: por ejercicio y por sesión.
@@ -94,7 +114,8 @@
 - ✅ Tipos de set confirmados: warmup, working, drop, rest_pause, myo_reps, amrap (ADR-009).
 - ✅ Esfuerzo registrable como RPE o RIR; fallo = RPE 10 / RIR 0.
 
+- ✅ Voz desde el inicio, ruta Whisper + LLM (ADR-010).
+- ✅ Motor de progresión: reglas + capa IA opcional (ADR-008, aceptada).
+
 ## Pendiente de decidir
-- **Ruta técnica de la voz** (registro y planeación de rutinas): Web Speech API
-  nativa vs. transcripción + LLM vs. híbrido, y su prioridad.
-- Validar ADR-008 (motor de reglas + capa IA opcional) con el usuario.
+- (nada — documentación de fase 0 cerrada; lo que surja se añade aquí)

@@ -36,6 +36,10 @@ en datos que muestran progreso de forma automática.
       volumen máximo, con su línea de tiempo (cuándo se rompió cada récord).
 - [ ] **Mesociclos:** bloques de entrenamiento con nombre, fechas y objetivo
       (hipertrofia, fuerza, estrés metabólico, descarga).
+- [ ] **Registro por voz** durante la sesión: dictar series ("press banca, 80 kilos,
+      8 repeticiones") sin tocar el teléfono. Ruta: Whisper + LLM (ADR-010).
+- [ ] **Planeación de rutinas por voz:** describir una rutina hablando y que la app
+      la estructure ("lunes empuje: press banca 4 por 8…"). Misma ruta técnica.
 
 ### Should-have (la siguiente capa)
 - [ ] **Motor de progresión:** la app analiza los resultados sesión tras sesión y
@@ -46,12 +50,10 @@ en datos que muestran progreso de forma automática.
 - [ ] Notas por sesión y por ejercicio; tiempo de descanso.
 - [ ] **Gráficos de progreso** por ejercicio (peso/volumen en el tiempo).
 
-### A explorar (alto valor, requiere prototipo)
-- [ ] **Registro por voz:** dictar series durante la sesión ("press banca, 80 kilos,
-      8 repeticiones") sin tocar el teléfono.
-- [ ] **Planeación de rutinas por voz:** describir una rutina hablando y que la app
-      la estructure ("lunes empuje: press banca 4 por 8, fondos 3 al fallo…").
-      Ruta técnica por decidir: Web Speech API nativa vs. transcripción + LLM vs. híbrido.
+> **Nota sobre la voz:** es una *capa* sobre la app — todo lo que se puede hacer por
+> voz debe poderse hacer también a mano. Se construye desde el inicio, pero el orden
+> de implementación arranca por el registro manual (la voz necesita que exista el
+> modelo de sesiones/series donde aterrizar lo dictado).
 
 ### Nice-to-have (más adelante)
 - [ ] Planificación semanal / calendario de entrenamientos.
