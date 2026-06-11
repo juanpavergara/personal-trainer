@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'docs: documentación inicial del proyecto \\(PRD, modelo de datos, decisiones\\) *)"
+    ]
+  }
+}
