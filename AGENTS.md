@@ -98,9 +98,17 @@ que propone cargas para la siguiente sesión. Registro y planeación de rutinas 
 - [x] Rutinas Fase A (modelo: routine_sets, mesocycle_id, maintenance) — migrado.
 - [x] Rutinas Fase B (CRUD): crear/listar/editar/eliminar rutinas, sets con reps
       sugeridas, volumen de plantilla (sets por grupo muscular), GIFs si hay media.
+- [x] Rutinas UX: lista con resumen (volumen por grupo + ejercicios); detalle con
+      modos ver/editar en la misma ruta (CTAs al fondo, eliminar con confirmación
+      inline); buscador de ejercicios con filtro por grupo muscular; reps por rango
+      editables con steppers; trash can para borrar sets.
+- [x] Media del seed provisional: los 21 ejercicios sembrados tienen imagen estática
+      de free-exercise-db (`scripts/fill-missing-media.mjs`, idempotente). El enum
+      `media_type` ahora incluye `image` (migración 0003).
 - [ ] Rutinas Fase C: iniciar sesión desde rutina (snapshot completo) + desvíos.
-- [ ] Catálogo completo: AscendAPI free = demo de 25 ej. RapidAPI solo tiene planes
-      de pago (usuario verificó). DECISIÓN PENDIENTE: pagar vs. dataset open source
+- [ ] Catálogo completo: AscendAPI free = demo de 25 ej. (cursor circular, search
+      deshabilitado; verificado). RapidAPI solo tiene planes de pago (usuario
+      verificó). DECISIÓN PENDIENTE: pagar vs. dataset open source
       (yuhonas/free-exercise-db, ~870 ej., MIT, imágenes estáticas).
 - [ ] Capa de voz (registro de series y planeación de rutinas). Necesita API key STT/LLM.
 - [ ] Mesociclos UI, volumen por grupo muscular (analytics), PRs, motor de progresión.
