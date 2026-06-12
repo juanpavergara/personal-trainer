@@ -152,6 +152,31 @@ export async function addRoutineSet(formData: FormData) {
   revalidatePath(`/routines/${routineId}`);
 }
 
+export async function updateRoutineSet(formData: FormData) {
+  const user = await getUser();
+  if (!user) return;
+
+  const routineId = formData.get("routineId") as string;
+  const routineExerciseId = formData.get("routineExerciseId") as string;
+  const setId = formData.get("setId") as string;
+  const suggestedReps = (formData.get("suggestedReps") as string)?.trim();
+  if (!suggestedReps) return;
+  await assertOwnRoutine(routineId, user.id);
+  await assertExerciseInRoutine(routineExerciseId, routineId);
+
+  await db
+    .update(routineSets)
+    .set({ suggestedReps })
+    .where(
+      and(
+        eq(routineSets.id, setId),
+        eq(routineSets.routineExerciseId, routineExerciseId),
+      ),
+    );
+
+  revalidatePath(`/routines/${routineId}`);
+}
+
 export async function removeRoutineSet(formData: FormData) {
   const user = await getUser();
   if (!user) return;
