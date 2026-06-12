@@ -37,9 +37,9 @@ export default async function Home() {
 
       <Link
         href="/routines"
-        className="block w-full bg-surface px-4 py-4 text-base font-medium text-accent active:bg-surface-alt"
+        className="mt-2 block w-full bg-accent px-4 py-4 text-center text-base font-medium text-white active:opacity-80"
       >
-        Mis rutinas
+        Rutinas
       </Link>
 
       <div className="px-4 pb-2 pt-6">
