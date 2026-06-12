@@ -33,7 +33,12 @@ export const trainingObjectiveEnum = pgEnum("training_objective", [
   "other",
 ]);
 
-export const mediaTypeEnum = pgEnum("media_type", ["video", "gif", "animation"]);
+export const mediaTypeEnum = pgEnum("media_type", [
+  "video",
+  "gif",
+  "animation",
+  "image",
+]);
 
 // Catálogo de ejercicios: globales (owner_id null) + personalizados por usuario
 export const exercises = pgTable(
